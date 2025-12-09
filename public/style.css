@@ -5,13 +5,15 @@ html, body{
 }
 .wrapper{
     margin:30px;
-    height:94vh;
+    min-height:100vh;
+    display:flex;
+    flex-direction: column;
 }
 .full-length{
-    
-    height:100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    flex:1;
 }
 .naming{
     display:flex;
@@ -27,6 +29,7 @@ html, body{
     background-color: rgb(213, 233, 250);
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+    height:70px;
 }
 .navigations{
     width:100%;
@@ -49,8 +52,12 @@ a{
 a:hover{
     color:rgb(25, 25, 255);
 }
+.hero{
+    height: 100%;
+    border:2px solid black;
+    background-color: #f4fbff;
+}
 .main{
-    height:100%;
     display:flex;
     justify-content: center;;
     align-items: center;
@@ -58,8 +65,8 @@ a:hover{
     flex-direction: column;
 }
 .btn{
-    width:300px;
-    height:150px;
+    width:350px;
+    height:100px;
     border-radius:20px;
     display: flex;
     justify-content: center;
@@ -79,5 +86,63 @@ footer{
     background-color: rgb(213, 233, 250);
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px; 
-    height:60px;  
+    height:70px;
+    margin:0px;
+}
+.form_container{
+    height:100%;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    background-color: #f4fbff;
+}
+.add_student_form{
+     box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 25px rgba(229, 9, 20, 0.15);
+    padding:40px;
+    display: flex;
+    flex-direction: column;
+    width:400px;
+    margin:20px;
+    border-radius: 20px;
+    background-color: white;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;   /* Forces vertical stacking */
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #1f2a44;
+}
+
+input, select {
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1.8px solid #cfd5e3;
+  border-radius: 10px;
+  outline: none;
+}
+
+input::placeholder {
+  color: #9aa1b2;
+}
+.sbtbtn{
+    width:400px;
+    height:45px;
+    border-radius:10px;
+    background-color: rgb(25, 0, 255);
+    border: none;
+    font-size:16px;
+    font-weight:normal;
+    color: white;
+}
+.sbtbtn:hover{
+    background-color: rgb(22, 22, 189);
+    cursor: pointer;
 }
