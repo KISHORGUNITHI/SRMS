@@ -34,7 +34,35 @@
                         <label for="studentPhone">Phone No</label>
                         <input type="text" id="studentPhone" placeholder="e.g., +1234567890">
                     </div>
-                    <button class="sbtbtn" id="submitBtn">Add Student</button>
+                    <button class="sbtbtn" id="submitBtn" >Add Student</button>
                 </div>
             </div>
 <%- include ("../views/partials/footer.ejs") %>
+<script>
+    document.getElementById('submitBtn').addEventListener('click', function() {
+        const studentData = {
+            id:  document.getElementById('studentId').value,
+            name: document.getElementById('studentName').value,
+            age:  document.getElementById('studentAge').value,
+            branch:  document.getElementById('branch').value,
+            year:  document.getElementById('year').value,
+            phone:  document.getElementById('studentPhone').value
+        };
+
+        fetch('/addStudent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(studentData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
