@@ -104,10 +104,10 @@ res.render("search", { student });
 
 Built by:<br>
 KISHOR GUNITHI<br>
+PATURU V N S GANESH CHARAN<br>
 DOGGA YASHWANTH<br>
 R.NITHIN<br>
 ANAND GOKUL KOTA<br>
-PATURU V N S GANESH CHARAN<br>
 Tech Stack: Node.js, Express, EJS, HTML, CSS, JS
 
 ---
