@@ -7,6 +7,8 @@
                 </div>
                 <form action="/search" method="POST">
                     <input class="search_item" type="text" name="id" placeholder="eg., AP987432345" required>
+                <form action="/searchStudent" method="POST">
+                    <input class="search_item" type="text" name="search_id" placeholder="eg., AP987432345" required>
                 </form>
                 <button id="search" type="submit">Search</button>
             </div>
@@ -27,4 +29,6 @@
                 </div> 
     <%}%>
 </div>
+<%- include ("../views/partials/footer.ejs") %>
+
 <%- include ("../views/partials/footer.ejs") %>

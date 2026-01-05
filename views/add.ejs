@@ -1,6 +1,10 @@
 <%- include ("../views/partials/header.ejs") %>
             <div class="form_container">
                 <div class="add_student_form">
+                    <form action="/addStudent" method="POST">
+                        <input type="hidden"  id="_csrf" value="<%= csrfToken %>">
+                    </form>
+                   
                     <div class="form-group">
                         <label for="studentId">Student ID</label>
                         <input type="text" id="studentId" placeholder="e.g., 2023CSE014">
@@ -48,6 +52,12 @@
             year:  document.getElementById('year').value,
             phone:  document.getElementById('studentPhone').value
         };
+     
+        fetch('/addStudent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': document.getElementById('_csrf').value
 
         fetch('/addStudent', {
             method: 'POST',
