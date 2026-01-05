@@ -209,9 +209,9 @@ p{
     background-color: rgb(25, 0, 255);;
     margin-top:10px;
     border:none;
+    width:100%;
     border-radius: 6px;
     color:white;
     font-size:bold;
-}
 }
 

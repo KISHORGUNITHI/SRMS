@@ -13,6 +13,9 @@ const csrfProtection=csrf({
 
 app.use(express.json());
 
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 const port = 3000;
@@ -29,6 +32,8 @@ app.get('/addStudent', csrfProtection,(req, res) => {
 
     });
     //console.log('request headers:',req.headers);        //add student
+app.get('/addStudent', (req, res) => {
+    res.render('add');  //add student
 });
 app.get('/searchStudent', (req, res) => {
     res.render('search',{ student:"" });  //search student
@@ -46,6 +51,12 @@ app.post('/addStudent',csrfProtection,(req, res) => {
    // res.json({ message: 'Student added successfully!' });
     console.log(id, name, age, branch, year, phone);
     //console.log('request headers of post meathod:',req.headers);
+app.post('/addStudent', (req, res) => {
+    const { id, name, age, branch, year, phone } = req.body;
+   
+    data.push({ id, name, age:parseInt(age) , branch, year:parseInt(year) , phone: parseInt(phone) });
+    res.json({ message: 'Student added successfully!' });
+    console.log(id, name, age, branch, year, phone);
 });
 //--search student--//
 app.post('/search', (req, res) => {
