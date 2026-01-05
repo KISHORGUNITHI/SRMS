@@ -1,8 +1,18 @@
 import express from 'express';
 import {data} from './data.js';
+import csrf from 'csurf';
+import cookieParser from 'cookie-parser';
+
+
 const app = express();
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+const csrfProtection=csrf({
+    cookie:true
+});
+
 app.use(express.json());
+
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 const port = 3000;
@@ -13,8 +23,12 @@ app.get('/', (req, res) => {
 app.get('/home', (req, res) => {
     res.render('home');  //home
 });
-app.get('/addStudent', (req, res) => {
-    res.render('add');  //add student
+app.get('/addStudent', csrfProtection,(req, res) => {
+    res.render('add',{
+        csrfToken : req.csrfToken()
+
+    });
+    //console.log('request headers:',req.headers);        //add student
 });
 app.get('/searchStudent', (req, res) => {
     res.render('search',{ student:"" });  //search student
@@ -25,12 +39,13 @@ app.get('/displaystudents', (req, res) => {
     
 });
 //--add student--//
-app.post('/addStudent', (req, res) => {
+app.post('/addStudent',csrfProtection,(req, res) => {
     const { id, name, age, branch, year, phone } = req.body;
    
     data.push({ id, name, age:parseInt(age) , branch, year:parseInt(year) , phone: parseInt(phone) });
-    res.json({ message: 'Student added successfully!' });
+   // res.json({ message: 'Student added successfully!' });
     console.log(id, name, age, branch, year, phone);
+    //console.log('request headers of post meathod:',req.headers);
 });
 //--search student--//
 app.post('/search', (req, res) => {

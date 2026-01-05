@@ -3,8 +3,8 @@
             <% students.forEach( (student)=>{ %>
                 <div class="student_card">
                     <div class="id_name">
-                        <h3 id="name"><%= student.name.toUpperCase() %></h3>
-                        <p id="id"><strong>ID:</strong> <%= student.id.toUpperCase() %></p>
+                        <h3 id="name"><%= student.name %></h3>
+                        <p id="id"><strong>ID:</strong> <%= student.id %></p>
                     </div>
                     <p id="age"><strong>Age:</strong> <%= student.age %></p>
                     <p id="phone"><strong>Phone:</strong> <%= student.phone %></p>
