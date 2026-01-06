@@ -16,20 +16,4 @@
             <% }); %>
         </div>
 
-        <div class="students_details">
-            <% students.forEach( (student)=>{ %>
-                <div class="student_card">
-                    <div class="id_name">
-                        <h3 id="name"><%= student.name.toUpperCase() %></h3>
-                        <p id="id"><strong>ID:</strong> <%= student.id.toUpperCase() %></p>
-                    </div>
-                    <p id="age"><strong>Age:</strong> <%= student.age %></p>
-                    <p id="phone"><strong>Phone:</strong> <%= student.phone %></p>
-                    <div class="phone_year">
-                        <p id="branch"><strong>Branch:</strong> <%= student.branch %></p>
-                        <p id="year"><strong>Year:</strong> <%= student.year %></p>
-                    </div>
-                </div>
-            <% }); %>
-        </div>
 <%- include ("../views/partials/footer.ejs") %>

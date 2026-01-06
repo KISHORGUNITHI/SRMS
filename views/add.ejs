@@ -55,14 +55,9 @@
      
         fetch('/addStudent', {
             method: 'POST',
-            headers: {
+      headers: {
                 'Content-Type': 'application/json',
                 'CSRF-Token': document.getElementById('_csrf').value
-
-        fetch('/addStudent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
             },
             body: JSON.stringify(studentData)
         })
