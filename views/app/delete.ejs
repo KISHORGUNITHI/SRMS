@@ -1,4 +1,9 @@
 <%- include ("../partials/header.ejs") %>
+   <% if(message){ %>
+     <script>
+            alert("<%= message%>");
+    </script>
+    <%}%>
 <div class="search_container">
         <div class="search_container">
             <div class="search_box">
@@ -8,6 +13,7 @@
                 <form action="/searchStudent" method="POST">
                     <input class="search_item" type="text" name="search_id" placeholder="eg., AP987432345" required>
                     <input type="hidden" name="identifier" value="true">
+                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                      <button id="search" type="submit">Search</button>
                 </form>
         
@@ -26,7 +32,7 @@
                         <p id="branch"><strong>Branch:</strong> <%= student.branch %></p>
                         <p id="year"><strong>Year:</strong> <%= student.year %></p>
                     <form action="/deleteStudent/<%= student.id %>" method="POST">
-
+                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <button  type="submit">delete</button>
                     </form>
                     </div>
@@ -38,8 +44,3 @@
     
 </div>
 <%- include ("../partials/footer.ejs") %>
-
-     <script>
-            alert(message);
-
-        </script>

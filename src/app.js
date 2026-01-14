@@ -10,7 +10,6 @@ import bcrypt from 'bcrypt';
 import env from 'dotenv';
 
 const port = 3000;
-const host = '10.1.184.23';
 const saltRounds = 10;
 
 env.config();
@@ -42,7 +41,7 @@ app.use(passport.session());
 
 //--passport strategy--//
 passport.use(
-  "lol",
+  "local",
   new Strategy((username, password, cb) => {
     try {
       const foundUser = user.find(u => u.username === username);
@@ -80,7 +79,8 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login?message=not_authenticated');
 }
 
-////////////////////////////////////////////////////////////////////////
+
+
 
 app.get('/', (req, res) => {
   res.render('auth/home');
@@ -130,13 +130,15 @@ app.post('/register', async (req, res) => {
 
 app.post(
   "/login",
-  passport.authenticate("lol", {
+  passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: "/login?message=user_not_found",
   })
 );
 
-//////////////////////////////////////////////////////////////////////////
+
+
+
 
 app.get('/home', isAuthenticated, (req, res) => {
   res.render('app/home');
@@ -148,15 +150,21 @@ app.get('/addStudent', isAuthenticated, csrfProtection, (req, res) => {
     });
 });
 
-app.get('/searchStudent', isAuthenticated, (req, res) => {
-  res.render('app/search', { student: null});
+app.get('/searchStudent', isAuthenticated,csrfProtection ,(req, res) => {
+  console.log(req.query.message)
+  res.render('app/search', { 
+    student: null,
+    csrfToken:req.csrfToken(),
+    message:req.query.message
+  });
 });
 
-app.get('/deleteStudent',isAuthenticated,(req,res)=>{
+app.get('/deleteStudent',isAuthenticated,csrfProtection,(req,res)=>{
   const message=req.query.message;
-  res.render('app/delete',{student:"",
+  console.log(message);
+  res.render('app/delete',{student:null,
     message:message || null,
-    
+    csrfToken:req.csrfToken()
   });
 })
 
@@ -173,30 +181,41 @@ app.post('/addStudent',isAuthenticated, csrfProtection, (req, res) => {
     phone: parseInt(phone),
   });
 
-  res.render('',{ message: 'Student added successfully!' });
+  res.json({ message: 'Student added successfully!' });
 });
 
 //--search student--//
-app.post('/searchStudent',isAuthenticated, (req, res) => {
+app.post('/searchStudent',isAuthenticated,csrfProtection, (req, res) => {
   const { search_id } = req.body;
   const student = data.find(student => student.id == search_id);
   console.log(req.body.identifier);
   if(req.body.identifier=='true'){
     if(student){
-     return res.render('app/delete',{student});
+     return res.render('app/delete',{
+      student:student||null,
+      csrfToken:req.csrfToken()
+     });
+
     }
-   
+   else{
+    res.redirect('/deleteStudent?message=student_not_found');
+   }
   }
   else{
 if (student) {
-   return  res.render('app/search', { student });
+   return  res.render('app/search', {  
+      student:student||null,
+      csrfToken:req.csrfToken() 
+    });
+  }else{
+    res.redirect('/searchStudent?message=student_not_found');
   }
   }
   
 });
 
 //--delete student--//
-app.post('/deleteStudent/:search_id',isAuthenticated,(req,res)=>{
+app.post('/deleteStudent/:search_id',isAuthenticated,csrfProtection,(req,res)=>{
     const id=(req.params.search_id);
     const index = data.findIndex(element => element.id === req.params.search_id);
 if (index !== -1) {

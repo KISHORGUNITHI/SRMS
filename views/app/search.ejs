@@ -8,13 +8,14 @@
                 <form action="/searchStudent" method="POST">
                     <input class="search_item" type="text" name="search_id" placeholder="eg., AP987432345" required>
                     <input type="hidden" name="identifier" value="false">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                      <button id="search" type="submit">Search</button>
                 </form>
         
             </div>
         </div>
 <div id="student_details">
-    <%if(student){%>
+    <%if(student!=null){%>
          <div class="student_card">
                     <div class="id_name">
                         <h3 id="name"><%= student.name.toUpperCase() %></h3>
@@ -30,7 +31,7 @@
             </div> 
   <% } else { %>
     <script>
-      alert(message);
+      alert("<%=message%>");
     </script>
   <% } %>
 </div>
