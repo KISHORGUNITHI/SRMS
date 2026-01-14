@@ -1,0 +1,45 @@
+<%- include ("../partials/header.ejs") %>
+<div class="search_container">
+        <div class="search_container">
+            <div class="search_box">
+                <div class="id_to_enter">
+                    <h3 style="margin:0px">Enter Student ID</h3>
+                </div>
+                <form action="/searchStudent" method="POST">
+                    <input class="search_item" type="text" name="search_id" placeholder="eg., AP987432345" required>
+                    <input type="hidden" name="identifier" value="true">
+                     <button id="search" type="submit">Search</button>
+                </form>
+        
+            </div>
+        </div>
+<div id="student_details">
+    <%if(student){%>
+         <div class="student_card">
+                    <div class="id_name">
+                        <h3 id="name"><%= student.name.toUpperCase() %></h3>
+                        <p id="id"><strong>ID:</strong> <%= student.id.toUpperCase() %></p>
+                    </div>
+                    <p id="age"><strong>Age:</strong> <%= student.age %></p>
+                    <p id="phone"><strong>Phone:</strong> <%= student.phone %></p>
+                    <div class="phone_year">
+                        <p id="branch"><strong>Branch:</strong> <%= student.branch %></p>
+                        <p id="year"><strong>Year:</strong> <%= student.year %></p>
+                    <form action="/deleteStudent/<%= student.id %>" method="POST">
+
+                        <button  type="submit">delete</button>
+                    </form>
+                    </div>
+
+             </div> 
+   
+    <% }%>
+   
+    
+</div>
+<%- include ("../partials/footer.ejs") %>
+
+     <script>
+            alert(message);
+
+        </script>

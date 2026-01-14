@@ -1,4 +1,4 @@
-<%- include ("../views/partials/header.ejs") %>
+<%- include ("../partials/header.ejs") %>
             <div class="form_container">
                 <div class="add_student_form">
                     <form action="/addStudent" method="POST">
@@ -41,7 +41,7 @@
                     <button class="sbtbtn" id="submitBtn" >Add Student</button>
                 </div>
             </div>
-<%- include ("../views/partials/footer.ejs") %>
+<%- include ("../partials/footer.ejs") %>
 <script>
     document.getElementById('submitBtn').addEventListener('click', function() {
         const studentData = {
