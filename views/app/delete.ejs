@@ -1,16 +1,22 @@
-<%- include ("../views/partials/header.ejs") %>
+<%- include ("../partials/header.ejs") %>
+   <% if(message){ %>
+     <script>
+            alert("<%= message%>");
+    </script>
+    <%}%>
 <div class="search_container">
         <div class="search_container">
             <div class="search_box">
                 <div class="id_to_enter">
                     <h3 style="margin:0px">Enter Student ID</h3>
                 </div>
-                <form action="/search" method="POST">
-                    <input class="search_item" type="text" name="id" placeholder="eg., AP987432345" required>
                 <form action="/searchStudent" method="POST">
                     <input class="search_item" type="text" name="search_id" placeholder="eg., AP987432345" required>
+                    <input type="hidden" name="identifier" value="true">
+                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                     <button id="search" type="submit">Search</button>
                 </form>
-                <button id="search" type="submit">Search</button>
+        
             </div>
         </div>
 <div id="student_details">
@@ -25,10 +31,16 @@
                     <div class="phone_year">
                         <p id="branch"><strong>Branch:</strong> <%= student.branch %></p>
                         <p id="year"><strong>Year:</strong> <%= student.year %></p>
+                    <form action="/deleteStudent/<%= student.id %>" method="POST">
+                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button  type="submit">delete</button>
+                    </form>
                     </div>
-                </div> 
-    <%}%>
-</div>
-<%- include ("../views/partials/footer.ejs") %>
 
-<%- include ("../views/partials/footer.ejs") %>
+             </div> 
+   
+    <% }%>
+   
+    
+</div>
+<%- include ("../partials/footer.ejs") %>
