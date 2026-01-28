@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRMS</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="full-length">
+            <navbar class="nav">
+                <div class="naming">
+                    <img src="/logo.png" alt="logo" width="50px" height="50px">
+                    <h3 id="high_name">STUDENT REPORT MANAGEMENT SYSTEM</h1>
+                </div>
+            </navbar>
+            
+        <div class="hero">
+            <div class="main">
+                <h1>SELECT YOUR ROLE</h1>
+                <div class="add_student">
+                    <button class="btn" id="admin" >
+                    
+                        <span><h2>Admin</h2></span>
+                    </button>
+                </div>
+                <div class="search_student">
+                    <button class="btn" id="student">
+                       
+                        <span><h2>Student</h2></span>
+                    </button>
+                </div>
+                <div class="display_student">
+                    <button class="btn" id="teacher">
+                        <span><h2>teacher</h2></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+<%- include ("../partials/footer.ejs") %>
+<script >
+    document.getElementById("admin").onclick = function() {
+        location.href = "/adminLogin";
+    };
+    document.getElementById("student").onclick = function() {
+        location.href = "/studentLogin";
+    };
+    document.getElementById("teacher").onclick = function() {
+        location.href = "/teacheLogin";
+    };
+</script>

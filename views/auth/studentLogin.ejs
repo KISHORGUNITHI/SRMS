@@ -6,15 +6,16 @@
 <% } %>
 
 <div class="login-page">
-  <h1 class="login-title">Login</h1>
+  <h1 class="login-title">Student Login</h1>
 
   <div class="login-card">
-    <form class="login-form" action="/login" method="POST">
+    <form class="login-form" action="/studentLogin" method="POST">
 
       <div class="form-field">
         <label for="username">Username</label>
         <input
           type="text"
+          placeholder="dialer.."
           id="username"
           name="username"
           required
@@ -25,6 +26,7 @@
         <label for="password">Password</label>
         <input
           type="password"
+          placeholder="id.."
           id="password"
           name="password"
           required

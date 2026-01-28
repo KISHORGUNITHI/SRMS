@@ -3,27 +3,35 @@ html, body{
     padding:0;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ---------- LAYOUT ---------- */
+
 .wrapper{
     margin:30px;
     min-height:100vh;
     display:flex;
     flex-direction: column;
 }
+
 .full-length{
-    height: 100%;
     display: flex;
     flex-direction: column;
     flex:1;
 }
+
+/* ---------- NAVBAR ---------- */
+
 .naming{
     display:flex;
     width:1000px;
     padding:10px;
 }
+
 #high_name{
     padding-top:15px;
-    margin:0px 0px 0px 10px;
+    margin-left:10px;
 }
+
 .nav{
     display:flex;
     background-color: rgb(213, 233, 250);
@@ -31,269 +39,315 @@ html, body{
     border-top-right-radius: 20px;
     height:70px;
 }
+
 .navigations{
     width:100%;
+    display:flex;
     justify-content: flex-end;
     margin-right:20px;
 }
+
 ul{
     padding:10px;
     display:flex;
-    justify-content: flex-end;
     gap:30px;
 }
+
 li{
     list-style: none;
 }
+
 a{
     text-decoration: none;
     color:rgb(94, 94, 100);
 }
+
 a:hover{
     color:rgb(25, 25, 255);
 }
+
+/* ---------- HERO ---------- */
+
 .hero{
     flex:1;
-    height: 100%;
     display:flex;
     align-items:center;
     justify-content: center;
     background-color: #f4fbff;
 }
+
 .main{
     display:flex;
-    justify-content: center;;
+    justify-content: center;
     align-items: center;
     gap:20px;
     flex-direction: column;
 }
+
+/* ---------- BUTTONS ---------- */
+
 .btn{
     width:350px;
     height:100px;
     border-radius:20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     gap:20px;
 }
+
 .btn:hover{
-    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 
+        0 8px 8px rgba(0, 0, 0, 0.2),
+        0 10px 20px rgba(0, 0, 0, 0.19);
     transition: 0.3s;
-    cursor: pointer;
+    cursor:pointer;
 }
-#footer, #cpyrht{
-    margin:5px;
-    text-align: center;
-}
+
+/* ---------- FOOTER ---------- */
+
 footer{
     display:flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items:center;
+    justify-content:center;
     background-color: rgb(213, 233, 250);
     border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px; 
+    border-bottom-right-radius: 20px;
     height:70px;
-    margin:0px;
 }
+
+#footer, #cpyrht{
+    margin:5px;
+    text-align:center;
+}
+
+/* ---------- FORMS ---------- */
+
 .form_container{
-    height:100%;
-    display: flex;
+    flex:1;
+    display:flex;
     align-items:center;
-    justify-content: center;
-    background-color: #f4fbff;
+    justify-content:center;
+    background-color:#f4fbff;
 }
+
 .add_student_form{
-    box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 0 25px rgba(229, 9, 20, 0.15);
     padding:40px;
-    display: flex;
-    flex-direction: column;
     width:400px;
     margin:20px;
-    border-radius: 20px;
-    background-color: white;
-}
-.form-group {
-  display: flex;
-  flex-direction: column;   /* Forces vertical stacking */
-  margin-bottom: 20px;
-}
-
-label {
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: #1f2a44;
+    border-radius:20px;
+    background:white;
+    display:flex;
+    flex-direction:column;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 0 25px rgba(229,9,20,0.15);
 }
 
-input, select {
-  padding: 12px 14px;
-  font-size: 16px;
-  border: 1.8px solid #cfd5e3;
-  border-radius: 10px;
-  outline: none;
+.form-group{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:20px;
 }
 
-input::placeholder {
-  color: #9aa1b2;
+label{
+    font-weight:bold;
+    margin-bottom:6px;
+    color:#1f2a44;
 }
+
+input, select{
+    padding:12px 14px;
+    font-size:16px;
+    border:1.8px solid #cfd5e3;
+    border-radius:10px;
+    outline:none;
+}
+
+input::placeholder{
+    color:#9aa1b2;
+}
+
 .sbtbtn{
-    width:400px;
+    width:100%;
     height:45px;
     border-radius:10px;
-    background-color: rgb(25, 0, 255);
-    border: none;
+    background-color:rgb(25,0,255);
+    border:none;
     font-size:16px;
-    font-weight:normal;
-    color: white;
+    color:white;
 }
+
 .sbtbtn:hover{
-    background-color: rgb(22, 22, 189);
-    cursor: pointer;
+    background-color:rgb(22,22,189);
+    cursor:pointer;
 }
+
+/* ---------- STUDENT CARDS ---------- */
+
 .student_card{
     padding:20px;
-    display: flex;
-    flex-direction: column;
-    width:300px;
-    border-radius: 20px;
-    background-color: white;
-    border:1px solid #cfd5e3;
     width:220px;
+    min-height:200px; /* ✅ added */
+    border-radius:20px;
+    background:white;
+    border:1px solid #cfd5e3;
+    display:flex;
+    flex-direction:column;
 }
+
+/* ---------- STUDENTS CONTAINER (ADDED) ---------- */
+
+.students_container{
+    display:flex;              /* ✅ added */
+    flex-direction:row;        /* ✅ added */
+    flex-wrap:wrap;            /* ✅ added */
+    gap:20px;                  /* ✅ added */
+    justify-content:flex-start;/* ✅ added */
+    padding:20px;              /* ✅ added */
+}
+
+/* ---------- STUDENT DETAILS ---------- */
+
 .students_details{
-    margin:10px;
-    display: flex;
-    gap:10px;
-    flex-wrap: wrap;
+    margin-top:12px; /* ✅ simplified (no flex here) */
 }
-p{
-    margin:0px;
+
+.students_details p{
+    margin:0;
+    font-size:14px;
+    color:#333;
 }
+
+.students_details .name{
+    text-align:center;
+    font-weight:bold;
+    font-size:16px;
+}
+
 .phone_year{
     display:flex;
-    justify-content: space-between;
+    justify-content:space-between;
+    margin-top:6px;
 }
-#name{
-    text-align: center;
+
+.phone_year p{
+    flex:1;
+    text-align:center;
 }
+
+.cgpa{
+    margin-top:6px;
+    text-align:center;
+    font-size:13.5px;
+    color:#444;
+}
+
+/* ---------- SEARCH ---------- */
+
 .search_container{
     flex:1;
-    height:100% ;
     display:flex;
-    justify-content: center;
-    align-items: center;
+    justify-content:center;
+    align-items:center;
 }
+
 .search_box{
-    box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 0 25px rgba(229, 9, 20, 0.15);
-    border:none;
     width:300px;
-    height:100px;
     padding:50px;
+    border-radius:10px;
     display:flex;
-    flex-direction: column;
-    justify-content: center;
-    border-radius: 10px;
+    flex-direction:column;
+    justify-content:center;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 0 25px rgba(229,9,20,0.15);
 }
+
 .search_item{
-    height: 15px;
-    width:270px;
+    height:30px;
+    width:100%;
 }
+
 #search{
     height:30px;
-    background-color: rgb(25, 0, 255);;
     margin-top:10px;
     border:none;
     width:100%;
-    border-radius: 6px;
+    border-radius:6px;
+    background-color:rgb(25,0,255);
     color:white;
-    font-size:bold;
 }
 
-/* Page layout */
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: #f4f6f9;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+/* ---------- LOGIN ---------- */
+
+.login-page{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:#f4f6f9;
 }
 
-/* Title */
-.login-title {
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
-  color: #222;
+.login-title{
+    margin-bottom:1.5rem;
+    font-size:2rem;
+    color:#222;
 }
 
-/* Card */
-.login-card {
-  width: 100%;
-  max-width: 360px;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+.login-card{
+    width:100%;
+    max-width:360px;
+    background:white;
+    padding:2rem;
+    border-radius:10px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.1);
 }
 
-/* Form */
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+.login-form{
+    display:flex;
+    flex-direction:column;
+    gap:1.2rem;
 }
 
-/* Fields */
-.form-field {
-  display: flex;
-  flex-direction: column;
+.form-field{
+    display:flex;
+    flex-direction:column;
 }
 
-.form-field label {
-  margin-bottom: 0.4rem;
-  font-size: 0.9rem;
-  color: #555;
+.form-field label{
+    margin-bottom:0.4rem;
+    font-size:0.9rem;
+    color:#555;
 }
 
-.form-field input {
-  padding: 0.6rem 0.7rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.form-field input{
+    padding:0.6rem 0.7rem;
+    font-size:1rem;
+    border:1px solid #ccc;
+    border-radius:6px;
 }
 
-.form-field input:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+.login-button{
+    margin-top:0.5rem;
+    padding:0.7rem;
+    font-size:1rem;
+    font-weight:600;
+    color:white;
+    background:#1e1e1e;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
 }
 
-/* Button */
-.login-button {
-  margin-top: 0.5rem;
-  padding: 0.7rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-  background: #1e1e1e;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+.login-button:hover{
+    background:black;
 }
 
-.login-button:hover {
-  background: #4338ca;
-}
-
-.login-button:active {
-  transform: translateY(1px);
+.login-button:active{
+    transform:translateY(1px);
 }

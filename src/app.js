@@ -1,6 +1,8 @@
 import express from 'express';
 import { data } from './data.js';
 import { user } from './user.js';
+import { student } from './student.js';
+import { teacher } from './teacher.js';
 import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -11,19 +13,20 @@ import env from 'dotenv';
 
 const port = 3000;
 const saltRounds = 10;
+const host='localhost';
+
 
 env.config();
 
 const app = express();
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json()); 
 
 const csrfProtection = csrf({ cookie: true });
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-
 
 //--session initialization--//
 app.use(
@@ -39,7 +42,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-//--passport strategy--//
+//--passport strategy admin & teacher--//
 passport.use(
   "local",
   new Strategy((username, password, cb) => {
@@ -58,15 +61,46 @@ passport.use(
     }
   })
 );
+//--passsport stratagey for Student--//
+passport.use("student",
+  
+  new Strategy((username,password,cb)=>{
+
+
+    const foundStudent=student.find(u=>u.username===username)
+    console.log(foundStudent)
+    if(!foundStudent){return cb(null,false);}
+    bcrypt.compare(password,foundStudent.password,(err,valid)=>{
+      if(!valid){return cb(null,false);}
+
+      return cb(null,foundStudent)
+    })
+  })
+)
+//passport strategy for teacher//
+passport.use("teacher",
+  new Strategy((username,password,cb)=>{
+
+  })
+)
 
 passport.serializeUser((user, cb) => {
-  cb(null, user.id);
+  cb(null,{ id:user.id,role:user.role});
 });
 
-passport.deserializeUser((id, cb) => {
+passport.deserializeUser((payload, cb) => {
   try {
-    const foundUser = user.find(u => u.id === id);
-    cb(null, foundUser);
+    if (payload.role === "admin") {
+      const foundUser = user.find(u => u.id === payload.id);
+      return cb(null, foundUser);
+    }
+
+    if (payload.role === "student") {
+      const foundStudent = student.find(u => u.id === payload.id);
+      return cb(null, foundStudent);
+    }
+
+    cb(null, false);
   } catch (err) {
     cb(err);
   }
@@ -76,26 +110,44 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login?message=not_authenticated');
+  res.redirect('/role?message=not_authenticated');
 }
-
-
-
-
+//--RBAC MIDDLEWARE--//
+function RBAC(allowedROles){
+    return (req,res,next)=>{
+        var role=req.user.role;
+        var allowed=allowedROles.find(r=>r===role);
+      if(allowed){
+              next();
+               }
+      else{
+           res.status("403").send("no access");
+          }
+       }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//--role selecting--//
 app.get('/', (req, res) => {
-  res.render('auth/home');
+  res.render('auth/role');
 });
-
-app.get('/homeauth', (req, res) => {
-  res.render('auth/home');
+//--role selecting--//
+app.get('/role', (req, res) => {
+  res.render('auth/role');
 });
+//--student login--//
+app.get('/studentLogin',(req,res)=>{
+  res.render('auth/studentLogin',{
+    message:null || req.query.message
+  });
+})
 
-app.get('/login', (req, res) => {
-  res.render('auth/login',{
+//--admin login--//
+app.get('/adminLogin', (req, res) => {
+  res.render('auth/adminlogin',{
     message:req.query.message || null
   });
 });
-
+//--logout--//
 app.get('/logout',isAuthenticated,(req,res)=>{
  
   req.logout((err)=>{
@@ -103,10 +155,12 @@ app.get('/logout',isAuthenticated,(req,res)=>{
       
       return next(err);
     }
-   res.redirect("/login");
+   res.redirect("/role");
   });
  
 })
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//--regester post--//
 app.get('/register', (req, res) => {
   res.render('auth/register');
 });
@@ -115,7 +169,7 @@ app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
   const existingUser = user.find(u => u.username === username);
-  if (existingUser) return res.redirect('/login?message=user_already_exists');
+  if (existingUser) return res.redirect('/adminLogin?message=user_already_exists');
 
   const hashed_password = await bcrypt.hash(password, saltRounds);
 
@@ -125,41 +179,88 @@ app.post('/register', async (req, res) => {
     password: hashed_password,
   });
 
-  res.redirect('/login');
+  res.redirect('/role');
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//admin login post//
+app.post(
+  "/adminLogin",
+  passport.authenticate("local", {
+    successRedirect: "/adminHome",
+    failureRedirect: "/adminLogin?message=user_not_found",
+  })
+);
+//studentLogin//
+app.post("/studentLogin", (req, res, next) => {
+
+  const middleware = passport.authenticate(
+    "student",
+    (err, user, info) => {
+
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        return res.redirect("/studentLogin?message=invalid_credentials");
+      }
+
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        res.redirect(`/studentHome/${user.id}`);
+      });
+
+    }
+  );
+
+  middleware(req, res, next);
 });
 
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/home",
-    failureRedirect: "/login?message=user_not_found",
-  })
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//--student home--//
+app.get(
+  "/studentHome/:id",
+  isAuthenticated,
+  RBAC(["student"]),
+  (req, res) => {
+    if (req.user.id !== req.params.id) {
+      return res.status(403).send("not your profile");
+    }
+
+    const student = data.find(u => u.id === req.params.id);
+
+    res.render("home/studenthome", {
+      student:student
+    });
+  }
 );
 
 
-
-
-
-app.get('/home', isAuthenticated, (req, res) => {
-  res.render('app/home');
+//--admin home--//
+app.get('/adminhome', isAuthenticated, (req, res) => {
+  res.render('home/admin_home');
 });
-
-app.get('/addStudent', isAuthenticated, csrfProtection, (req, res) => {
+//--add student--//
+app.get('/addStudent', isAuthenticated, RBAC(["admin","teacher"]),csrfProtection, (req, res) => {
     res.render('app/add', {
       csrfToken: req.csrfToken(),
     });
 });
-
-app.get('/searchStudent', isAuthenticated,csrfProtection ,(req, res) => {
+//--search student--//
+app.get('/searchStudent', isAuthenticated,RBAC(["admin","teacher"]),csrfProtection ,(req, res) => {
   console.log(req.query.message)
   res.render('app/search', { 
     student: null,
+    message:req.query.message || null,
     csrfToken:req.csrfToken(),
     message:req.query.message
   });
 });
-
-app.get('/deleteStudent',isAuthenticated,csrfProtection,(req,res)=>{
+//--selete student--//
+app.get('/deleteStudent',isAuthenticated,RBAC(["admin"]),csrfProtection,(req,res)=>{
   const message=req.query.message;
   console.log(message);
   res.render('app/delete',{student:null,
@@ -168,8 +269,8 @@ app.get('/deleteStudent',isAuthenticated,csrfProtection,(req,res)=>{
   });
 })
 
-//--add student--//
-app.post('/addStudent',isAuthenticated, csrfProtection, (req, res) => {
+//--add student post--//
+app.post('/addStudent',isAuthenticated,RBAC(["admin","teacher"]) ,csrfProtection, (req, res) => {
   const { id, name, age, branch, year, phone } = req.body;
 
   data.push({
@@ -184,8 +285,8 @@ app.post('/addStudent',isAuthenticated, csrfProtection, (req, res) => {
   res.json({ message: 'Student added successfully!' });
 });
 
-//--search student--//
-app.post('/searchStudent',isAuthenticated,csrfProtection, (req, res) => {
+//--search studen postt--//
+app.post('/searchStudent',isAuthenticated,RBAC(["admin","teacher"]) ,csrfProtection, (req, res) => {
   const { search_id } = req.body;
   const student = data.find(student => student.id == search_id);
   console.log(req.body.identifier);
@@ -193,6 +294,7 @@ app.post('/searchStudent',isAuthenticated,csrfProtection, (req, res) => {
     if(student){
      return res.render('app/delete',{
       student:student||null,
+      message:null,
       csrfToken:req.csrfToken()
      });
 
@@ -214,8 +316,8 @@ if (student) {
   
 });
 
-//--delete student--//
-app.post('/deleteStudent/:search_id',isAuthenticated,csrfProtection,(req,res)=>{
+//--delete student post--//
+app.post('/deleteStudent/:search_id',isAuthenticated,RBAC(["teacher"]) ,csrfProtection,(req,res)=>{
     const id=(req.params.search_id);
     const index = data.findIndex(element => element.id === req.params.search_id);
 if (index !== -1) {
@@ -224,13 +326,13 @@ if (index !== -1) {
   res.redirect('/deleteStudent?message=deleted');
 })
 //--display students--//
-app.get('/displaystudents',isAuthenticated, (req, res) => {
+app.get('/displaystudents',isAuthenticated,RBAC(["admin","teacher"]) , (req, res) => {
   res.render('app/display.ejs', {
     students: data,
   });
 });
 
 //--server--//
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(port,host, () => {
+  console.log(`Server is running on http://${host}:${port}`);
 });

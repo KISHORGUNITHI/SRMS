@@ -5,7 +5,8 @@ export  const data=[
         age: 18,
         branch:"CSE",
         year:2,
-        phone: 8328179006
+        phone: 8328179006,
+        cgpa:9.8
     },
     {
         id:"AP24110011729",
@@ -13,7 +14,8 @@ export  const data=[
         age: 18,
         branch:"CSE",
         year:2,
-        phone: 8803211560
+        phone: 8803211560,
+        cgpa:9.3
     },
     {
         id:"AP24110011685",
@@ -21,7 +23,8 @@ export  const data=[
         age: 18,
         branch:"CSE",
         year:2,
-        phone: 8328179006
+        phone: 8341203890,
+        cgpa:9.6
     },
     {
         id:"AP24110011694",
@@ -29,7 +32,8 @@ export  const data=[
         age: 18,
         branch:"CSE",
         year:2,
-        phone: 8328179006
+        phone: 7330968920,
+        cgpa:9.1
     },
     {
         id:"AP24110011704",
@@ -37,6 +41,7 @@ export  const data=[
         age: 18,
         branch:"CSE",
         year:2,
-        phone: 8328179006
+        phone: 8074845848,
+        cgpa:9.8
     }
 ];
