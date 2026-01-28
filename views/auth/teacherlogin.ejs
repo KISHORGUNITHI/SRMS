@@ -1,0 +1,45 @@
+<%- include('../partials/login_header') %>
+<% if (message) { %>
+  <script>
+    window.alert("<%= message %>");
+  </script>
+<% } %>
+
+<div class="login-page">
+  <h1 class="login-title">FACULTY LOGIN</h1>
+
+  <div class="login-card">
+    <form class="login-form" action="/teacherLogin" method="POST">
+
+      <div class="form-field">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="email"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="password"
+          required
+        >
+      </div>
+
+      <button type="submit" class="login-button">
+        Login
+      </button>
+
+    </form>
+  </div>
+</div>
+
+
+<%- include('../partials/footer') %>

@@ -4,6 +4,7 @@ export var student=[]
 var username;
 var password;
 for(var i of data){
+
   username=String(i.phone)
   password=await bcrypt.hash(i.id,10)
   student.push({
@@ -12,6 +13,5 @@ for(var i of data){
     password:password,
     role:'student'
   })
-  
 }
-console.log(student[1]);
+console.log(student[5]);

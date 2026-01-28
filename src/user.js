@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
 var password='123'
 
-console.log(password)
+
 var hash=await bcrypt.hash(password,10)
 export const user=[
     {
@@ -12,4 +12,3 @@ export const user=[
     }
     
 ];
-console.log(user[0].password)

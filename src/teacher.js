@@ -1,12 +1,15 @@
+import {data} from "./data.js"
 import bcrypt from "bcrypt"
-var username="teacher@gmail.com"
+
 var password="456";
 var hash=await bcrypt.hash(password,10);
 export const teacher=[
     {
         id:"202501",
-        username:username,
+        username:"teacher@gmail.com",
         password:hash,
         role:"teacher"
     }
 ]
+
+

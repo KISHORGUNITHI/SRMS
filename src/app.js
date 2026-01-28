@@ -42,47 +42,29 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-//--passport strategy admin & teacher--//
+//--passport strategy admin & teacher & student--//
 passport.use(
   "local",
   new Strategy((username, password, cb) => {
-    try {
-      const foundUser = user.find(u => u.username === username);
-      console.log(foundUser);
-      if (!foundUser) return cb(null, false);
 
-      bcrypt.compare(password, foundUser.password, (err, valid) => {
-        if (err) return cb(err);
-        if (!valid) return cb(null, false);
-        return cb(null, foundUser);
-      });
-    } catch (err) {
-      return cb(err);
+    const foundUser =
+      user.find(u => u.username === username) ||
+      student.find(s => s.username === username) ||
+      teacher.find(t => t.username === username);
+
+
+    if (!foundUser) {
+      return cb(null, false);
     }
+
+    bcrypt.compare(password, foundUser.password, (err, valid) => {
+      if (err) return cb(err);
+      if (!valid) return cb(null, false);
+
+      return cb(null, foundUser);
+    });
   })
 );
-//--passsport stratagey for Student--//
-passport.use("student",
-  
-  new Strategy((username,password,cb)=>{
-
-
-    const foundStudent=student.find(u=>u.username===username)
-    console.log(foundStudent)
-    if(!foundStudent){return cb(null,false);}
-    bcrypt.compare(password,foundStudent.password,(err,valid)=>{
-      if(!valid){return cb(null,false);}
-
-      return cb(null,foundStudent)
-    })
-  })
-)
-//passport strategy for teacher//
-passport.use("teacher",
-  new Strategy((username,password,cb)=>{
-
-  })
-)
 
 passport.serializeUser((user, cb) => {
   cb(null,{ id:user.id,role:user.role});
@@ -91,41 +73,23 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((payload, cb) => {
   try {
     if (payload.role === "admin") {
-      const foundUser = user.find(u => u.id === payload.id);
-      return cb(null, foundUser);
+      return cb(null, user.find(u => u.id === payload.id));
     }
 
     if (payload.role === "student") {
-      const foundStudent = student.find(u => u.id === payload.id);
-      return cb(null, foundStudent);
+      return cb(null, student.find(u => u.id === payload.id));
     }
 
-    cb(null, false);
+    if (payload.role === "teacher") {
+      return cb(null, teacher.find(u => u.id === payload.id));
+    }
+
+    return cb(null, false);
   } catch (err) {
-    cb(err);
+    return cb(err);
   }
 });
-//--autherization routes--//
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/role?message=not_authenticated');
-}
-//--RBAC MIDDLEWARE--//
-function RBAC(allowedROles){
-    return (req,res,next)=>{
-        var role=req.user.role;
-        var allowed=allowedROles.find(r=>r===role);
-      if(allowed){
-              next();
-               }
-      else{
-           res.status("403").send("no access");
-          }
-       }
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //--role selecting--//
 app.get('/', (req, res) => {
   res.render('auth/role');
@@ -147,6 +111,13 @@ app.get('/adminLogin', (req, res) => {
     message:req.query.message || null
   });
 });
+
+//--teacher login--//
+app.get('/teacherLogin',(req,res)=>{
+  res.render("auth/teacherlogin",{
+    message:req.query.message||null
+  })
+})
 //--logout--//
 app.get('/logout',isAuthenticated,(req,res)=>{
  
@@ -159,7 +130,6 @@ app.get('/logout',isAuthenticated,(req,res)=>{
   });
  
 })
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--regester post--//
 app.get('/register', (req, res) => {
   res.render('auth/register');
@@ -181,7 +151,6 @@ app.post('/register', async (req, res) => {
 
   res.redirect('/role');
 });
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //admin login post//
 app.post(
   "/adminLogin",
@@ -194,7 +163,7 @@ app.post(
 app.post("/studentLogin", (req, res, next) => {
 
   const middleware = passport.authenticate(
-    "student",
+    "local",
     (err, user, info) => {
 
       if (err) {
@@ -217,9 +186,22 @@ app.post("/studentLogin", (req, res, next) => {
 
   middleware(req, res, next);
 });
+//teacher login//
+app.post('/teacherLogin',(req,res,next)=>{
+  passport.authenticate("local",(err,user,info)=>{
+    if(err)
+      return next(err);
+    if(!user)
+      return res.redirect("/teacherLogin?message=user_not_found");
+    req.logIn(user,(err)=>{
+      if(err)
+      return  next(err);
 
+     return  res.redirect(`/teacherhome`)
+    })
+  })(req,res,next);
+})
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--student home--//
 app.get(
   "/studentHome/:id",
@@ -238,11 +220,15 @@ app.get(
   }
 );
 
-
 //--admin home--//
-app.get('/adminhome', isAuthenticated, (req, res) => {
+app.get('/adminHome', isAuthenticated, RBAC(["admin"]), (req, res) => {
   res.render('home/admin_home');
 });
+
+//--TEACHER HOME--//
+app.get('/teacherhome',isAuthenticated,RBAC(["teacher"]),(req,res)=>{
+res.render('home/teacher_home');
+})
 //--add student--//
 app.get('/addStudent', isAuthenticated, RBAC(["admin","teacher"]),csrfProtection, (req, res) => {
     res.render('app/add', {
@@ -259,7 +245,7 @@ app.get('/searchStudent', isAuthenticated,RBAC(["admin","teacher"]),csrfProtecti
     message:req.query.message
   });
 });
-//--selete student--//
+//--delete student--//
 app.get('/deleteStudent',isAuthenticated,RBAC(["admin"]),csrfProtection,(req,res)=>{
   const message=req.query.message;
   console.log(message);
