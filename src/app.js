@@ -1,7 +1,7 @@
 import express from 'express';
-import { data } from './data.js';
-import { user } from './user.js';
-import { student } from './student.js';
+import { data } from './database/data.js';
+import { user } from './database/user.js';
+import { student } from './database/student.js';
 import { teacher } from './teacher.js';
 import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
@@ -40,55 +40,9 @@ app.use(
 //--passport initialization--//
 app.use(passport.initialize());
 app.use(passport.session());
+ ;
 
 
-//--passport strategy admin & teacher & student--//
-passport.use(
-  "local",
-  new Strategy((username, password, cb) => {
-
-    const foundUser =
-      user.find(u => u.username === username) ||
-      student.find(s => s.username === username) ||
-      teacher.find(t => t.username === username);
-
-
-    if (!foundUser) {
-      return cb(null, false);
-    }
-
-    bcrypt.compare(password, foundUser.password, (err, valid) => {
-      if (err) return cb(err);
-      if (!valid) return cb(null, false);
-
-      return cb(null, foundUser);
-    });
-  })
-);
-
-passport.serializeUser((user, cb) => {
-  cb(null,{ id:user.id,role:user.role});
-});
-
-passport.deserializeUser((payload, cb) => {
-  try {
-    if (payload.role === "admin") {
-      return cb(null, user.find(u => u.id === payload.id));
-    }
-
-    if (payload.role === "student") {
-      return cb(null, student.find(u => u.id === payload.id));
-    }
-
-    if (payload.role === "teacher") {
-      return cb(null, teacher.find(u => u.id === payload.id));
-    }
-
-    return cb(null, false);
-  } catch (err) {
-    return cb(err);
-  }
-});
 
 //--role selecting--//
 app.get('/', (req, res) => {
