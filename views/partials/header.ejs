@@ -9,19 +9,30 @@
 <body>
     <div class="wrapper">
         <div class="full-length">
-            <navbar class="nav">
-                <div class="naming">
-                    <img src="/logo.png" alt="logo" width="50px" height="50px">
-                    <h3 id="high_name">STUDENT REPORT MANAGEMENT SYSTEM</h1>
-                </div>
-                <div class="navigations">
-                    <ul>
-                        <li><a href="/teacherhome">Home</a></li>
-                        <li><a href="/addStudent">Add Student</a></li>
-                        <li><a href="/searchstudent">Search Student</a></li>
-                        <li><a href="/displaystudents">Display Students</a></li>
-                        <li><a href="/logout">logout</a></li>
-                    </ul>
-                </div>
-            </navbar>
+          <navbar class="nav">
+  <div class="naming">
+    <img src="/logo.png" width="50">
+    <h3>STUDENT REPORT MANAGEMENT SYSTEM</h3>
+  </div>
+
+  <ul>
+    <% if (user?.role === "admin") { %>
+      <li><a href="/adminHome">Home</a></li>
+      <li><a href="/students/addStudent">Add Student</a></li>
+      <li><a href="/students/searchStudent">Search Student</a></li>
+      <li><a href="/students/deleteStudent">Delete Student</a></li>
+      <li><a href="/students/displayStudents">Display Students</a></li>
+    <% } %>
+
+    <% if (user?.role === "teacher") { %>
+      <li><a href="/teacherhome">Home</a></li>
+      <li><a href="/students/addStudent">Add Student</a></li>
+      <li><a href="/students/searchStudent">Search Student</a></li>
+      <li><a href="/students/displayStudents">Display Students</a></li>
+    <% } %>
+
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+</navbar>
+
             

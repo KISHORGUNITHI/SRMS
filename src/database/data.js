@@ -45,4 +45,3 @@ export  const data=[
         cgpa:9.8
     }
 ];
-console.log(data[6]);

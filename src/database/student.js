@@ -14,4 +14,3 @@ for(var i of data){
     role:'student'
   })
 }
-console.log(student[5]);

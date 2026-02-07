@@ -1,278 +1,65 @@
-import express from 'express';
-import { data } from './database/data.js';
-import { user } from './database/user.js';
-import { student } from './database/student.js';
-import { teacher } from './teacher.js';
-import csrf from 'csurf';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import passport from 'passport';
-import { Strategy } from 'passport-local';
-import bcrypt from 'bcrypt';
-import env from 'dotenv';
+import express from "express";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+import env from "dotenv";
 
-const port = 3000;
-const saltRounds = 10;
-const host='localhost';
+import { sessionmiddleware } from "./modules/config/session.js";
+import "./modules/config/passport.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
+
+
+import authRoutes from "./modules/auth/auth.routes.js";
+import studentRoutes from "./modules/students/students.routes.js";
+import adminRoutes from "./modules/admin/admin.routes.js";
+import teacherRoutes from "./modules/teacher/teacher.routes.js";
 
 env.config();
-
 const app = express();
+
+/* ---------- core ---------- */
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); 
+app.use(express.json());
 
-const csrfProtection = csrf({ cookie: true });
+/* ---------- views ---------- */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
+app.set("views", path.join(__dirname, "../views"));
+app.set("view engine", "ejs");
+app.use(express.static((path.join(__dirname, "../public"))));
 
-//--session initialization--//
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+/* ---------- session ---------- */
+app.use(sessionmiddleware);
 
-//--passport initialization--//
+/* ---------- passport ---------- */
 app.use(passport.initialize());
 app.use(passport.session());
- ;
-
-
-
-//--role selecting--//
-app.get('/', (req, res) => {
-  res.render('auth/role');
-});
-//--role selecting--//
-app.get('/role', (req, res) => {
-  res.render('auth/role');
-});
-//--student login--//
-app.get('/studentLogin',(req,res)=>{
-  res.render('auth/studentLogin',{
-    message:null || req.query.message
-  });
-})
-
-//--admin login--//
-app.get('/adminLogin', (req, res) => {
-  res.render('auth/adminlogin',{
-    message:req.query.message || null
-  });
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
 });
 
-//--teacher login--//
-app.get('/teacherLogin',(req,res)=>{
-  res.render("auth/teacherlogin",{
-    message:req.query.message||null
-  })
-})
-//--logout--//
-app.get('/logout',isAuthenticated,(req,res)=>{
- 
-  req.logout((err)=>{
-    if(err){
-      
-      return next(err);
-    }
-   res.redirect("/role");
-  });
- 
-})
-//--regester post--//
-app.get('/register', (req, res) => {
-  res.render('auth/register');
-});
 
-app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+/* ---------- routes ---------- */
+app.use("/", authRoutes);
+app.use("/", adminRoutes);
+app.use("/", teacherRoutes);
+app.use("/students", studentRoutes);
 
-  const existingUser = user.find(u => u.username === username);
-  if (existingUser) return res.redirect('/adminLogin?message=user_already_exists');
-
-  const hashed_password = await bcrypt.hash(password, saltRounds);
-
-  user.push({
-    id: user.length + 1,
-    username,
-    password: hashed_password,
-  });
-
-  res.redirect('/role');
-});
-//admin login post//
-app.post(
-  "/adminLogin",
-  passport.authenticate("local", {
-    successRedirect: "/adminHome",
-    failureRedirect: "/adminLogin?message=user_not_found",
-  })
-);
-//studentLogin//
-app.post("/studentLogin", (req, res, next) => {
-
-  const middleware = passport.authenticate(
-    "local",
-    (err, user, info) => {
-
-      if (err) {
-        return next(err);
-      }
-
-      if (!user) {
-        return res.redirect("/studentLogin?message=invalid_credentials");
-      }
-
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-        res.redirect(`/studentHome/${user.id}`);
-      });
-
-    }
-  );
-
-  middleware(req, res, next);
-});
-//teacher login//
-app.post('/teacherLogin',(req,res,next)=>{
-  passport.authenticate("local",(err,user,info)=>{
-    if(err)
-      return next(err);
-    if(!user)
-      return res.redirect("/teacherLogin?message=user_not_found");
-    req.logIn(user,(err)=>{
-      if(err)
-      return  next(err);
-
-     return  res.redirect(`/teacherhome`)
-    })
-  })(req,res,next);
-})
-
-//--student home--//
-app.get(
-  "/studentHome/:id",
-  isAuthenticated,
-  RBAC(["student"]),
-  (req, res) => {
-    if (req.user.id !== req.params.id) {
-      return res.status(403).send("not your profile");
-    }
-
-    const student = data.find(u => u.id === req.params.id);
-
-    res.render("home/studenthome", {
-      student:student
-    });
+/* ---------- csrf error ---------- */
+app.use((err, req, res, next) => {
+  if (err.code === "EBADCSRFTOKEN") {
+    return res.status(403).send("Invalid CSRF token");
   }
-);
-
-//--admin home--//
-app.get('/adminHome', isAuthenticated, RBAC(["admin"]), (req, res) => {
-  res.render('home/admin_home');
+  next(err);
 });
 
-//--TEACHER HOME--//
-app.get('/teacherhome',isAuthenticated,RBAC(["teacher"]),(req,res)=>{
-res.render('home/teacher_home');
-})
-//--add student--//
-app.get('/addStudent', isAuthenticated, RBAC(["admin","teacher"]),csrfProtection, (req, res) => {
-    res.render('app/add', {
-      csrfToken: req.csrfToken(),
-    });
-});
-//--search student--//
-app.get('/searchStudent', isAuthenticated,RBAC(["admin","teacher"]),csrfProtection ,(req, res) => {
-  console.log(req.query.message)
-  res.render('app/search', { 
-    student: null,
-    message:req.query.message || null,
-    csrfToken:req.csrfToken(),
-    message:req.query.message
-  });
-});
-//--delete student--//
-app.get('/deleteStudent',isAuthenticated,RBAC(["admin"]),csrfProtection,(req,res)=>{
-  const message=req.query.message;
-  console.log(message);
-  res.render('app/delete',{student:null,
-    message:message || null,
-    csrfToken:req.csrfToken()
-  });
-})
-
-//--add student post--//
-app.post('/addStudent',isAuthenticated,RBAC(["admin","teacher"]) ,csrfProtection, (req, res) => {
-  const { id, name, age, branch, year, phone } = req.body;
-
-  data.push({
-    id,
-    name,
-    age: parseInt(age),
-    branch,
-    year: parseInt(year),
-    phone: parseInt(phone),
-  });
-
-  res.json({ message: 'Student added successfully!' });
+/* ---------- 404 ---------- */
+app.use((req, res) => {
+  res.status(404).send("Page not found");
 });
 
-//--search studen postt--//
-app.post('/searchStudent',isAuthenticated,RBAC(["admin","teacher"]) ,csrfProtection, (req, res) => {
-  const { search_id } = req.body;
-  const student = data.find(student => student.id == search_id);
-  console.log(req.body.identifier);
-  if(req.body.identifier=='true'){
-    if(student){
-     return res.render('app/delete',{
-      student:student||null,
-      message:null,
-      csrfToken:req.csrfToken()
-     });
-
-    }
-   else{
-    res.redirect('/deleteStudent?message=student_not_found');
-   }
-  }
-  else{
-if (student) {
-   return  res.render('app/search', {  
-      student:student||null,
-      csrfToken:req.csrfToken() 
-    });
-  }else{
-    res.redirect('/searchStudent?message=student_not_found');
-  }
-  }
-  
-});
-
-//--delete student post--//
-app.post('/deleteStudent/:search_id',isAuthenticated,RBAC(["teacher"]) ,csrfProtection,(req,res)=>{
-    const id=(req.params.search_id);
-    const index = data.findIndex(element => element.id === req.params.search_id);
-if (index !== -1) {
-  data.splice(index, 1);
-}
-  res.redirect('/deleteStudent?message=deleted');
-})
-//--display students--//
-app.get('/displaystudents',isAuthenticated,RBAC(["admin","teacher"]) , (req, res) => {
-  res.render('app/display.ejs', {
-    students: data,
-  });
-});
-
-//--server--//
-app.listen(port,host, () => {
-  console.log(`Server is running on http://${host}:${port}`);
-});
+export default app;

@@ -1,4 +1,4 @@
-import {data} from "./data.js"
+
 import bcrypt from "bcrypt"
 
 var password="456";
