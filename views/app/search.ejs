@@ -5,7 +5,7 @@
                 <div class="id_to_enter">
                     <h3 style="margin:0px">Enter Student ID</h3>
                 </div>
-                <form action="/searchStudent" method="POST">
+                <form action="/students/searchStudent" method="POST">
                     <input class="search_item" type="text" name="search_id" placeholder="eg., AP987432345" required>
                     <input type="hidden" name="identifier" value="false">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -31,6 +31,7 @@
             </div> 
   <% } else { %>
     <script>
+        if(message)
       alert("<%=message%>");
     </script>
   <% } %>

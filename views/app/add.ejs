@@ -38,6 +38,10 @@
                         <label for="studentPhone">Phone No</label>
                         <input type="text" id="studentPhone" placeholder="e.g., +1234567890">
                     </div>
+                    <div class="form-group">
+                        <label for="CGPA">CGPA</label>
+                        <input type="text" id="CGPA" placeholder="e.g.,9.8">
+                    </div>
                     <button class="sbtbtn" id="submitBtn" >Add Student</button>
                 </div>
             </div>
@@ -53,7 +57,7 @@
             phone:  document.getElementById('studentPhone').value
         };
      
-        fetch('/addStudent', {
+        fetch('/students/addStudent', {
             method: 'POST',
       headers: {
                 'Content-Type': 'application/json',

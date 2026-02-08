@@ -1,0 +1,18 @@
+<%- include ("../partials/header.ejs") %>
+        <div class="hero">
+            <div class="main">
+                <h1>admin page</h1>
+                <div class="add_student">
+                    <button class="btn" id="add_stud" >
+                        <span><img src="add icon.png" alt="add" width="50px" height="50px"></span>
+                        <span><h2>Add Student</h2></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+<%- include ("../partials/footer.ejs") %>
+<script >
+    document.getElementById("add_stud").onclick = function() {
+        location.href = "/students/addStudent";
+    };
+</script>
